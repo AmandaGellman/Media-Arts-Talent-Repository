@@ -3,13 +3,28 @@ info:
   # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: Media Arts Talent Repository API
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
     description: Health operations
+  - name: users
+    description: User management
+  - name: talents
+    description: Talent profiles
+  - name: memberships
+    description: Membership plans
+  - name: jobs
+    description: Job board
+  - name: ads
+    description: Advertising
+  - name: media
+    description: Media uploads
+  - name: stats
+    description: Analytics and statistics
+
 paths:
   /healthz:
     get:
@@ -24,6 +39,557 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+
+  /users:
+    get:
+      operationId: listUsers
+      tags: [users]
+      summary: List users (admin)
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+        - name: plan
+          in: query
+          schema:
+            type: string
+        - name: search
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of users
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserListResponse"
+    post:
+      operationId: createUser
+      tags: [users]
+      summary: Register a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateUserBody"
+      responses:
+        "201":
+          description: User created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "400":
+          description: Validation error
+
+  /users/{id}:
+    get:
+      operationId: getUser
+      tags: [users]
+      summary: Get user profile
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: User profile
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "404":
+          description: Not found
+    patch:
+      operationId: updateUser
+      tags: [users]
+      summary: Update user profile
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateUserBody"
+      responses:
+        "200":
+          description: Updated user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+    delete:
+      operationId: deleteUser
+      tags: [users]
+      summary: Delete user (admin)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /talents:
+    get:
+      operationId: listTalents
+      tags: [talents]
+      summary: List/search talent profiles
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 12
+        - name: search
+          in: query
+          schema:
+            type: string
+        - name: city
+          in: query
+          schema:
+            type: string
+        - name: region
+          in: query
+          schema:
+            type: string
+        - name: gender
+          in: query
+          schema:
+            type: string
+        - name: minAge
+          in: query
+          schema:
+            type: integer
+        - name: maxAge
+          in: query
+          schema:
+            type: integer
+        - name: minExperience
+          in: query
+          schema:
+            type: integer
+        - name: maxExperience
+          in: query
+          schema:
+            type: integer
+        - name: talentType
+          in: query
+          schema:
+            type: string
+        - name: plan
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Talent list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TalentListResponse"
+
+  /talents/{id}:
+    get:
+      operationId: getTalent
+      tags: [talents]
+      summary: Get talent profile
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Talent profile
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TalentProfile"
+        "404":
+          description: Not found
+
+  /talents/featured:
+    get:
+      operationId: getFeaturedTalents
+      tags: [talents]
+      summary: Get featured/priority talent profiles
+      responses:
+        "200":
+          description: Featured talents
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/TalentCard"
+
+  /memberships/plans:
+    get:
+      operationId: getMembershipPlans
+      tags: [memberships]
+      summary: Get available membership plans
+      responses:
+        "200":
+          description: All plans
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/MembershipPlan"
+
+  /memberships/subscribe:
+    post:
+      operationId: subscribeMembership
+      tags: [memberships]
+      summary: Subscribe to a membership plan
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SubscribeBody"
+      responses:
+        "201":
+          description: Subscription created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Subscription"
+
+  /memberships/{userId}:
+    get:
+      operationId: getUserMembership
+      tags: [memberships]
+      summary: Get user's current membership
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: User membership
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Subscription"
+        "404":
+          description: No membership found
+
+  /jobs:
+    get:
+      operationId: listJobs
+      tags: [jobs]
+      summary: List job postings
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 10
+        - name: search
+          in: query
+          schema:
+            type: string
+        - name: city
+          in: query
+          schema:
+            type: string
+        - name: category
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Job list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/JobListResponse"
+    post:
+      operationId: createJob
+      tags: [jobs]
+      summary: Post a new job ($100 per post)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateJobBody"
+      responses:
+        "201":
+          description: Job created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Job"
+
+  /jobs/{id}:
+    get:
+      operationId: getJob
+      tags: [jobs]
+      summary: Get job posting
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Job
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Job"
+        "404":
+          description: Not found
+    patch:
+      operationId: updateJob
+      tags: [jobs]
+      summary: Update job posting
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateJobBody"
+      responses:
+        "200":
+          description: Updated job
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Job"
+    delete:
+      operationId: deleteJob
+      tags: [jobs]
+      summary: Delete job posting
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /ads:
+    get:
+      operationId: listAds
+      tags: [ads]
+      summary: List ads
+      parameters:
+        - name: placement
+          in: query
+          schema:
+            type: string
+        - name: active
+          in: query
+          schema:
+            type: boolean
+      responses:
+        "200":
+          description: Ad list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Ad"
+    post:
+      operationId: createAd
+      tags: [ads]
+      summary: Create an ad placement
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateAdBody"
+      responses:
+        "201":
+          description: Ad created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Ad"
+
+  /ads/{id}:
+    patch:
+      operationId: updateAd
+      tags: [ads]
+      summary: Update ad
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateAdBody"
+      responses:
+        "200":
+          description: Updated ad
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Ad"
+    delete:
+      operationId: deleteAd
+      tags: [ads]
+      summary: Delete ad
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /media:
+    post:
+      operationId: uploadMedia
+      tags: [media]
+      summary: Upload media file reference
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateMediaBody"
+      responses:
+        "201":
+          description: Media created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Media"
+
+  /media/{userId}:
+    get:
+      operationId: getUserMedia
+      tags: [media]
+      summary: Get media for a user
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Media list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Media"
+
+  /media/{id}/delete:
+    delete:
+      operationId: deleteMedia
+      tags: [media]
+      summary: Delete a media item
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /stats/overview:
+    get:
+      operationId: getStatsOverview
+      tags: [stats]
+      summary: Platform statistics overview
+      responses:
+        "200":
+          description: Platform stats
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StatsOverview"
+
+  /stats/talent-types:
+    get:
+      operationId: getTalentTypeBreakdown
+      tags: [stats]
+      summary: Breakdown of talent types
+      responses:
+        "200":
+          description: Talent type breakdown
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/TalentTypeCount"
+
+  /stats/membership-distribution:
+    get:
+      operationId: getMembershipDistribution
+      tags: [stats]
+      summary: Distribution of membership plans
+      responses:
+        "200":
+          description: Membership distribution
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/MembershipCount"
+
 components:
   schemas:
     HealthStatus:
@@ -34,3 +600,682 @@ components:
       required:
         - status
 
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+        email:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        phone:
+          type: ["string", "null"]
+        city:
+          type: string
+        province:
+          type: string
+        country:
+          type: string
+        role:
+          type: string
+          enum: [user, advertiser, admin]
+        planName:
+          type: ["string", "null"]
+        profilePhotoUrl:
+          type: ["string", "null"]
+        bannerUrl:
+          type: ["string", "null"]
+        bio:
+          type: ["string", "null"]
+        jobTitle:
+          type: ["string", "null"]
+        talentTags:
+          type: array
+          items:
+            type: string
+        yearsExperience:
+          type: ["integer", "null"]
+        gender:
+          type: ["string", "null"]
+        age:
+          type: ["integer", "null"]
+        website:
+          type: ["string", "null"]
+        instagram:
+          type: ["string", "null"]
+        twitter:
+          type: ["string", "null"]
+        linkedin:
+          type: ["string", "null"]
+        isActive:
+          type: boolean
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+      required:
+        - id
+        - email
+        - firstName
+        - lastName
+        - city
+        - province
+        - country
+        - role
+        - isActive
+        - talentTags
+        - createdAt
+        - updatedAt
+
+    CreateUserBody:
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        phone:
+          type: ["string", "null"]
+        city:
+          type: string
+        province:
+          type: string
+        country:
+          type: string
+        gender:
+          type: ["string", "null"]
+        age:
+          type: ["integer", "null"]
+        planName:
+          type: string
+        profilePhotoUrl:
+          type: ["string", "null"]
+        bio:
+          type: ["string", "null"]
+        jobTitle:
+          type: ["string", "null"]
+        talentTags:
+          type: array
+          items:
+            type: string
+        yearsExperience:
+          type: ["integer", "null"]
+        website:
+          type: ["string", "null"]
+        instagram:
+          type: ["string", "null"]
+        twitter:
+          type: ["string", "null"]
+        linkedin:
+          type: ["string", "null"]
+        paypalOrderId:
+          type: ["string", "null"]
+      required:
+        - email
+        - password
+        - firstName
+        - lastName
+        - city
+        - province
+        - country
+        - planName
+
+    UpdateUserBody:
+      type: object
+      properties:
+        firstName:
+          type: string
+        lastName:
+          type: string
+        phone:
+          type: ["string", "null"]
+        city:
+          type: string
+        province:
+          type: string
+        bio:
+          type: ["string", "null"]
+        jobTitle:
+          type: ["string", "null"]
+        talentTags:
+          type: array
+          items:
+            type: string
+        yearsExperience:
+          type: ["integer", "null"]
+        gender:
+          type: ["string", "null"]
+        age:
+          type: ["integer", "null"]
+        profilePhotoUrl:
+          type: ["string", "null"]
+        bannerUrl:
+          type: ["string", "null"]
+        website:
+          type: ["string", "null"]
+        instagram:
+          type: ["string", "null"]
+        twitter:
+          type: ["string", "null"]
+        linkedin:
+          type: ["string", "null"]
+        isActive:
+          type: boolean
+
+    UserListResponse:
+      type: object
+      properties:
+        users:
+          type: array
+          items:
+            $ref: "#/components/schemas/User"
+        total:
+          type: integer
+        page:
+          type: integer
+        limit:
+          type: integer
+      required:
+        - users
+        - total
+        - page
+        - limit
+
+    TalentCard:
+      type: object
+      properties:
+        id:
+          type: integer
+        firstName:
+          type: string
+        lastName:
+          type: string
+        jobTitle:
+          type: ["string", "null"]
+        city:
+          type: string
+        province:
+          type: string
+        planName:
+          type: ["string", "null"]
+        profilePhotoUrl:
+          type: ["string", "null"]
+        talentTags:
+          type: array
+          items:
+            type: string
+        yearsExperience:
+          type: ["integer", "null"]
+      required:
+        - id
+        - firstName
+        - lastName
+        - city
+        - province
+        - talentTags
+
+    TalentProfile:
+      type: object
+      properties:
+        id:
+          type: integer
+        firstName:
+          type: string
+        lastName:
+          type: string
+        jobTitle:
+          type: ["string", "null"]
+        city:
+          type: string
+        province:
+          type: string
+        country:
+          type: string
+        planName:
+          type: ["string", "null"]
+        profilePhotoUrl:
+          type: ["string", "null"]
+        bannerUrl:
+          type: ["string", "null"]
+        bio:
+          type: ["string", "null"]
+        talentTags:
+          type: array
+          items:
+            type: string
+        yearsExperience:
+          type: ["integer", "null"]
+        gender:
+          type: ["string", "null"]
+        age:
+          type: ["integer", "null"]
+        website:
+          type: ["string", "null"]
+        instagram:
+          type: ["string", "null"]
+        twitter:
+          type: ["string", "null"]
+        linkedin:
+          type: ["string", "null"]
+        media:
+          type: array
+          items:
+            $ref: "#/components/schemas/Media"
+      required:
+        - id
+        - firstName
+        - lastName
+        - city
+        - province
+        - country
+        - talentTags
+        - media
+
+    TalentListResponse:
+      type: object
+      properties:
+        talents:
+          type: array
+          items:
+            $ref: "#/components/schemas/TalentCard"
+        total:
+          type: integer
+        page:
+          type: integer
+        limit:
+          type: integer
+      required:
+        - talents
+        - total
+        - page
+        - limit
+
+    MembershipPlan:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        slug:
+          type: string
+        priceYearly:
+          type: number
+        bioLimit:
+          type: ["integer", "null"]
+        talentLimit:
+          type: ["integer", "null"]
+        mediaLimit:
+          type: ["integer", "null"]
+        jobCredits:
+          type: integer
+        hasPriority:
+          type: boolean
+        hasCompanyLogo:
+          type: boolean
+        isBusinessPlan:
+          type: boolean
+        isMostPopular:
+          type: boolean
+        features:
+          type: array
+          items:
+            type: string
+        description:
+          type: string
+      required:
+        - id
+        - name
+        - slug
+        - priceYearly
+        - jobCredits
+        - hasPriority
+        - hasCompanyLogo
+        - isBusinessPlan
+        - isMostPopular
+        - features
+        - description
+
+    SubscribeBody:
+      type: object
+      properties:
+        userId:
+          type: integer
+        planSlug:
+          type: string
+        paypalOrderId:
+          type: string
+      required:
+        - userId
+        - planSlug
+        - paypalOrderId
+
+    Subscription:
+      type: object
+      properties:
+        id:
+          type: integer
+        userId:
+          type: integer
+        planSlug:
+          type: string
+        planName:
+          type: string
+        status:
+          type: string
+          enum: [active, expired, cancelled]
+        startDate:
+          type: string
+        expiresAt:
+          type: string
+        paypalOrderId:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+      required:
+        - id
+        - userId
+        - planSlug
+        - planName
+        - status
+        - startDate
+        - expiresAt
+        - createdAt
+
+    Job:
+      type: object
+      properties:
+        id:
+          type: integer
+        userId:
+          type: integer
+        title:
+          type: string
+        company:
+          type: string
+        description:
+          type: string
+        category:
+          type: string
+        city:
+          type: string
+        province:
+          type: string
+        compensation:
+          type: ["string", "null"]
+        contactEmail:
+          type: string
+        status:
+          type: string
+          enum: [active, expired, draft]
+        expiresAt:
+          type: string
+        paypalOrderId:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+      required:
+        - id
+        - userId
+        - title
+        - company
+        - description
+        - category
+        - city
+        - province
+        - contactEmail
+        - status
+        - expiresAt
+        - createdAt
+
+    CreateJobBody:
+      type: object
+      properties:
+        userId:
+          type: integer
+        title:
+          type: string
+        company:
+          type: string
+        description:
+          type: string
+        category:
+          type: string
+        city:
+          type: string
+        province:
+          type: string
+        compensation:
+          type: ["string", "null"]
+        contactEmail:
+          type: string
+        paypalOrderId:
+          type: ["string", "null"]
+      required:
+        - userId
+        - title
+        - company
+        - description
+        - category
+        - city
+        - province
+        - contactEmail
+
+    UpdateJobBody:
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        category:
+          type: string
+        compensation:
+          type: ["string", "null"]
+        status:
+          type: string
+
+    JobListResponse:
+      type: object
+      properties:
+        jobs:
+          type: array
+          items:
+            $ref: "#/components/schemas/Job"
+        total:
+          type: integer
+        page:
+          type: integer
+        limit:
+          type: integer
+      required:
+        - jobs
+        - total
+        - page
+        - limit
+
+    Ad:
+      type: object
+      properties:
+        id:
+          type: integer
+        userId:
+          type: integer
+        placement:
+          type: string
+          enum: [sidebar, footer]
+        imageUrl:
+          type: string
+        linkUrl:
+          type: string
+        altText:
+          type: ["string", "null"]
+        priceMonthly:
+          type: number
+        status:
+          type: string
+          enum: [active, inactive, pending]
+        impressions:
+          type: integer
+        clicks:
+          type: integer
+        startDate:
+          type: string
+        expiresAt:
+          type: string
+        paypalOrderId:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+      required:
+        - id
+        - userId
+        - placement
+        - imageUrl
+        - linkUrl
+        - priceMonthly
+        - status
+        - impressions
+        - clicks
+        - startDate
+        - expiresAt
+        - createdAt
+
+    CreateAdBody:
+      type: object
+      properties:
+        userId:
+          type: integer
+        placement:
+          type: string
+          enum: [sidebar, footer]
+        imageUrl:
+          type: string
+        linkUrl:
+          type: string
+        altText:
+          type: ["string", "null"]
+        paypalOrderId:
+          type: ["string", "null"]
+      required:
+        - userId
+        - placement
+        - imageUrl
+        - linkUrl
+
+    UpdateAdBody:
+      type: object
+      properties:
+        imageUrl:
+          type: string
+        linkUrl:
+          type: string
+        altText:
+          type: ["string", "null"]
+        status:
+          type: string
+
+    Media:
+      type: object
+      properties:
+        id:
+          type: integer
+        userId:
+          type: integer
+        url:
+          type: string
+        mediaType:
+          type: string
+          enum: [image, video, audio, document]
+        title:
+          type: ["string", "null"]
+        description:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+      required:
+        - id
+        - userId
+        - url
+        - mediaType
+        - createdAt
+
+    CreateMediaBody:
+      type: object
+      properties:
+        userId:
+          type: integer
+        url:
+          type: string
+        mediaType:
+          type: string
+          enum: [image, video, audio, document]
+        title:
+          type: ["string", "null"]
+        description:
+          type: ["string", "null"]
+      required:
+        - userId
+        - url
+        - mediaType
+
+    StatsOverview:
+      type: object
+      properties:
+        totalUsers:
+          type: integer
+        activeUsers:
+          type: integer
+        totalTalents:
+          type: integer
+        totalJobs:
+          type: integer
+        activeJobs:
+          type: integer
+        totalAds:
+          type: integer
+        activeAds:
+          type: integer
+        totalRevenue:
+          type: number
+      required:
+        - totalUsers
+        - activeUsers
+        - totalTalents
+        - totalJobs
+        - activeJobs
+        - totalAds
+        - activeAds
+        - totalRevenue
+
+    TalentTypeCount:
+      type: object
+      properties:
+        talentType:
+          type: string
+        count:
+          type: integer
+      required:
+        - talentType
+        - count
+
+    MembershipCount:
+      type: object
+      properties:
+        planName:
+          type: string
+        count:
+          type: integer
+        revenue:
+          type: number
+      required:
+        - planName
+        - count
+        - revenue

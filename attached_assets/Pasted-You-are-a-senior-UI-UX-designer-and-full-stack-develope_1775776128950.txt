@@ -1,0 +1,72 @@
+You are a senior UI/UX designer and full-stack developer. Build a complete, production-ready, mobile-first web platform called MEDIA ARTS TALENT REPOSITORY.
+
+DESIGN INSPIRATION: Squarespace, Adobe Portfolio, Apple. Minimalist, modern, premium.
+
+TECH STACK:
+- Frontend: React with Vite, Tailwind CSS, shadcn/ui, Framer Motion
+- Backend: Node.js Express
+- Database: PostgreSQL
+- Payments: PayPal JavaScript SDK
+- Structure: clean component-based, fully responsive
+
+DESIGN SYSTEM
+
+Colors: Black #000000, White #FFFFFF, Red #E50914, Light Grey #F5F5F5, Dark Grey #222222
+Typography: Inter, bold hero headlines, clear hierarchy
+Style: large bold type, rounded 2xl cards, subtle shadows, generous whitespace, smooth hover lift, mobile-first
+
+NAVIGATION: Sticky top bar with Home, Explore Talent, Membership Plans, Post a Job, Advertise, Sign In / Sign Up
+
+HOMEPAGE SECTIONS IN ORDER:
+1. HERO: headline "Connect with the creative pulse of Windsor", subtext about discovering local media arts talent, buttons "Explore Talent" and "Join the Directory", subtle gradient background, trust badge "Media Arts Talent Repository"
+2. MEMBERSHIP: toggle Individual vs Business, cards for each plan, highlight Silver as Most Popular
+3. FIND TALENT: large search with multi-select filters for Talent, City, Region, Gender, Age Range, Years Experience, show sample cards
+4. JOB BOARD: explain $100 per post, 2 month duration, button "Post a Job"
+5. ADVERTISING: mockups for Sidebar $30/month and Footer $15/month
+
+PLANS AND LIMITS:
+- Friend $25/year: bio 150 chars, 3 talents, 0 media
+- Bronze $50/year: bio 300, 5 talents, 3 media
+- Silver $100/year: bio 600, 10 talents, 10 media
+- Gold $150/year: unlimited bio, unlimited talents, 25 media, priority
+- Gold Business $500/year: Gold features plus company logo and 5 job credits
+- Platinum Business $1000/year: Gold features plus logo and 15 job credits
+
+SIGN-UP FLOW: Multi-step only, never one long form. Step 1 Choose Plan, Step 2 Basic Info, Step 3 Profile Info, Step 4 Bio, Step 5 Media Upload, Step 6 Review and Pay with PayPal. Include progress bar and save progress.
+
+PROFILE PAGE: LinkedIn style with photo, banner, name, title, plan badge, location, talents as tags, bio, experience, media gallery, contact info
+
+DASHBOARDS: User can edit profile and view analytics. Advertiser can upload ads and track performance. Admin can manage users, memberships, jobs, ads, and moderate PG content.
+
+IMPLEMENT THESE EXACT FILES
+
+
+1. tailwind.config.js
+/** @type {import('tailwindcss').Config} */
+export default {
+  darkMode: ["class"],
+  content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
+  theme: {
+    extend: {
+      colors: {
+        black: "#000000",
+        white: "#FFFFFF",
+        red: { DEFAULT: "#E50914", 700: "#B40710" },
+        grey: { light: "#F5F5F5", dark: "#222222", 100: "#F5F5F5", 800: "#222222" },
+      },
+      fontFamily: { sans: ["Inter","system-ui","-apple-system","BlinkMacSystemFont","Segoe UI","sans-serif"] },
+      borderRadius: { xl: "1rem", "2xl": "1.5rem" },
+      boxShadow: { card: "0 4px 24px rgba(0,0,0,0.06)", hover: "0 8px 32px rgba(0,0,0,0.12)" },
+    },
+  },
+  plugins: [require("tailwindcss-animate")],
+}
+
+2. src/index.css
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+body { @apply bg-white text-black antialiased; }
+h1 { @apply text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight; }
+h2 { @apply text-3xl md:text-4xl font-bold tracking-tight; }
+.btn-primary { @apply bg
