@@ -63,8 +63,8 @@ export default function HomePage() {
 
             <h1 className="text-5xl md:text-7xl lg:text-8xl font-black text-white leading-[0.9] tracking-tight mb-6">
               Connect with the{" "}
-              <span className="text-[#E50914]">your creative pulse</span>{" "}
-              of Windsor
+              <span className="text-[#E50914]">creative pulse</span>{" "}
+              through the Media Arts Talent Repository (MATR)
             </h1>
 
             <p className="text-white/60 text-lg md:text-xl max-w-2xl leading-relaxed mb-10">
