@@ -68,8 +68,8 @@ export default function HomePage() {
             </h1>
 
             <p className="text-white/60 text-lg md:text-xl max-w-2xl leading-relaxed mb-10">
-              Discover Windsor's most talented photographers, filmmakers, musicians, designers, and creative professionals.
-              The definitive directory for the region's media arts community.
+              Discover talented photographers, filmmakers, musicians, designers, and creative professionals.
+              Join our directory for the media arts community.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4">
